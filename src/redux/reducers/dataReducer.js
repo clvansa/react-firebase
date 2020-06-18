@@ -1,0 +1,87 @@
+import {SET_SCREAMS, LOADING_DATA, LIKE_SCREAM, UNLIKE_SCREAM, DELETE_SCREAM,SET_SCREAM, POST_SCREAM,SET_UPDATE,SET_UPDATE2,SUBMIT_COMMENT,DELETE_COMMENT} from '../types'
+
+const initialState = {
+    screams: [],
+    scream: {},
+    loading:false
+}
+let index2;
+
+export default function(state= initialState, action){
+    switch(action.type){
+        case LOADING_DATA:
+            return {
+                ...state,
+                loading:true
+            }
+        case SET_SCREAMS:
+            return{
+                ...state,
+                screams: action.payload,
+                loading:false
+            }
+        case SET_SCREAM:
+            return{
+                ...state,
+                scream: action.payload
+            }
+        case LIKE_SCREAM:
+        case UNLIKE_SCREAM:
+                let index = state.screams.findIndex((scream) => scream.screamId === action.payload.screamId);
+                state.screams[index] =  action.payload;
+                if(state.scream.screamId === action.payload.screamId){
+                    let temp = state.scream.comments;
+                    state.scream = action.payload;
+                    state.scream.comments = temp
+                }
+                return{
+                    ...state
+                }
+        case SET_UPDATE : 
+                     index2 = state.screams.findIndex((scream) => scream.screamId === action.payload.screamId);
+                return {
+                    ...state
+                }
+        case SET_UPDATE2 : 
+                state.screams[index2].screamImage = action.payload.screamImage 
+        return {
+                ...state
+            }
+        case DELETE_SCREAM:
+            let index1 = state.screams.findIndex(scream => scream.screamId === action.payload)
+            state.screams.splice(index1, 1)
+            return {
+                ...state,
+               
+            }
+        case DELETE_COMMENT:
+            let index3 = state.scream.comments.findIndex(comment => comment.commentId === action.payload)
+            state.scream.comments.splice(index3, 1)
+            return {
+                ...state,
+                scream:{
+                    ...state.scream,
+                    comments: [...state.scream.comments ] }
+                
+               
+            }
+        case POST_SCREAM:
+            return {
+                ...state,
+            screams : [
+                action.payload,
+                ...state.screams]
+            }
+        case SUBMIT_COMMENT:
+            return {
+                ...state,
+                scream:{
+                    ...state.scream,
+                    comments: [action.payload, ...state.scream.comments]
+                }
+            }
+        default : 
+            return  state
+            
+    }
+}
